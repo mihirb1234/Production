@@ -76,19 +76,52 @@ For local development, you can create a `docker-compose.override.yml` file (copy
 ## API Endpoints
 
 - Health check: `GET /health_internal`
-- Public APIs: `/api/public/*`
-- Report APIs: `/api/reports/*`
+- User APIs: `/api/users/*`
+- Order APIs: `/api/orders/*`
+- **Main API**: `GET /api/orders/user/{userId}` - Lists all orders for a user
+
+## Testing
+
+### Running Tests Locally
+```bash
+# Run all tests
+./mvnw test
+
+# Run specific test class
+./mvnw test -Dtest=MemesCommerceeApplicationTests
+
+# Run with coverage
+./mvnw test jacoco:report
+```
+
+### Test Configuration
+- **Database**: H2 in-memory database for fast, isolated testing
+- **Profile**: `test` profile automatically applied
+- **Data**: Test data is created and cleaned up automatically
+
+### API Testing with Postman
+1. Import `MemesCommerce.postman_collection.json`
+2. Set base URL to `http://localhost:8080`
+3. Test the main API: `GET /api/orders/user/1`
 
 ## Project Structure
 
 ```
-src/main/java/org/example/
+src/main/java/com/example/memes_commercee/
 ├── controller/     # REST API endpoints
-├── model/          # JPA entities
-├── repository/     # Data access layer
+├── model/          # JPA entities (User, Order, OrderStatus)
+├── repository/     # Data access layer (JPA repositories)
 ├── service/        # Business logic layer
-│   └── report/     # Domain-specific services
-└── config/         # Configuration classes
+└── MemesCommerceeApplication.java
+
+src/test/java/com/example/memes_commercee/
+└── MemesCommerceeApplicationTests.java  # Integration tests
+
+src/main/resources/
+└── application.properties  # Production config
+
+src/test/resources/
+└── application.properties  # Test config (H2 database)
 ```
 
 ## Development (without Docker)
