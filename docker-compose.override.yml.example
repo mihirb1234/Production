@@ -1,0 +1,17 @@
+# Example docker-compose override file for local development
+# Copy this to docker-compose.override.yml and modify as needed
+
+version: '3.8'
+
+services:
+  app:
+    environment:
+      - SHOW_SQL=true  # Enable SQL logging in development
+    volumes:
+      - ./logs:/app/logs  # Mount logs directory for easier access
+    ports:
+      - "8080:8080"  # Keep port exposed for local access
+
+  db:
+    ports:
+      - "3306:3306"  # Expose MySQL port for local database tools

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=jdbc:mysql://db:3306/memesdb
+      - DATABASE_USERNAME=memes_user
+      - DATABASE_PASSWORD=secure_password_123
+      - SHOW_SQL=false
+      - SERVER_PORT=8080
+      - DB_MAX_POOL_SIZE=10
+      - DB_MIN_IDLE=5
+      - DB_CONNECTION_TIMEOUT=20000
+      - DB_IDLE_TIMEOUT=300000
+      - DB_MAX_LIFETIME=1200000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - memes-network
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=memesdb
+      - MYSQL_USER=memes_user
+      - MYSQL_PASSWORD=secure_password_123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - memes-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  mysql_data:
+
+networks:
+  memes-network:
+    driver: bridge
